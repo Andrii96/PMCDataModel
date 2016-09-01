@@ -7,9 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMCDataModel", "PMCDataMode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApplication", "ClientApplication\ClientApplication.csproj", "{0E32A7CE-3EF1-434E-84C6-15BD8B1A0E57}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F2279690-FDD7-4A6F-9520-F9A1848F033F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMCDataModelTests", "PositionTest\PMCDataModelTests.csproj", "{B33B7FCB-9F14-4EC1-BFC9-D0F51F42AB33}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMCDataModelTests", "PMCDataModelTests\PMCDataModelTests.csproj", "{72BEF185-0A40-4047-B26A-C5C987AC98F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,15 +23,12 @@ Global
 		{0E32A7CE-3EF1-434E-84C6-15BD8B1A0E57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E32A7CE-3EF1-434E-84C6-15BD8B1A0E57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E32A7CE-3EF1-434E-84C6-15BD8B1A0E57}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B33B7FCB-9F14-4EC1-BFC9-D0F51F42AB33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B33B7FCB-9F14-4EC1-BFC9-D0F51F42AB33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B33B7FCB-9F14-4EC1-BFC9-D0F51F42AB33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B33B7FCB-9F14-4EC1-BFC9-D0F51F42AB33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72BEF185-0A40-4047-B26A-C5C987AC98F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72BEF185-0A40-4047-B26A-C5C987AC98F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72BEF185-0A40-4047-B26A-C5C987AC98F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72BEF185-0A40-4047-B26A-C5C987AC98F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{B33B7FCB-9F14-4EC1-BFC9-D0F51F42AB33} = {F2279690-FDD7-4A6F-9520-F9A1848F033F}
 	EndGlobalSection
 EndGlobal
