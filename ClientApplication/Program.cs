@@ -1,93 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PMCDataModel;
 
 namespace ClientApplication
 {
     class Program
-    {     
+    {  
         static void Main(string[] args)
         {
-            //declaring two lists of 2D points
-            List<Point2D<int>> firstXYPointsList = new List<Point2D<int>>(50);
-            List<Point2D<decimal>> secondXYPointsList = new List<Point2D<decimal>>(200);
-
-            //declaring two lists of 1D point
-            List<decimal> XPointList1 = new List<decimal>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-            List<double> XPointList2 = new List<double>();
-
-            //initializing points
+            //A Container collection contains 3 containers. All data are decimal.
+            //Each matrix contains 100 positions
+            //Each container contains 2 matrices with the first matrix in each container being XY data
+            //and the second matrix in each container being X data.
+            //Position1 of the XY data contains 50 points.
+            //Position2 of the XY data contains 200 points. The other XY positions are empty.
+            //Position 1 and 2 of the X data matrix contain a numerical value, the others do not.
             try
             {
-                for (int i = 0; i < 100; i++)
+                //creating XY positions
+                var position1XY = Position<decimal>.CreatePosition(Point<decimal>.PointType.Point2d, 50);
+                var position2XY = Position<decimal>.CreatePosition(Point<decimal>.PointType.Point2d, 200);
+
+                List<Position<decimal>> XYPositionsList = new List<Position<decimal>>();
+
+                //adding position1XY and position2XY to the positionXY list
+                XYPositionsList.Add(position1XY);
+                XYPositionsList.Add(position2XY);
+
+                //creating X positions
+                var position1X = Position<decimal>.CreatePosition(Point<decimal>.PointType.Point1d, 50);
+                var position2X = Position<decimal>.CreatePosition(Point<decimal>.PointType.Point1d, 20);
+
+                List<Position<decimal>> XPositionsList = new List<Position<decimal>>();
+
+                //adding position1X and position2X to the positionX list
+                XPositionsList.Add(position1X);
+                XPositionsList.Add(position2X);
+
+                for (int i = 2; i < 100; i++)
                 {
-                    XPointList2.Add(i + 3);
+                    XYPositionsList.Add(new Position<decimal>());
+                    XPositionsList.Add(new Position<decimal>());
                 }
 
-                for (int i = 0; i < firstXYPointsList.Capacity; i++)
+                //Initializing matrices
+                var matrix1 = new Matrix<decimal>(XYPositionsList);
+                var matrix2 = new Matrix<decimal>(XPositionsList);
+
+                List<Container<decimal>> containers = new List<Container<decimal>>();
+
+                //Creating each container and fill it with matrices
+                for (int i = 0; i < 3; i++)
                 {
-                    firstXYPointsList.Add(new Point2D<int>(i, i + 1));
-                }
+                    var container = new Container<decimal>();
+                    container.Add(matrix1);
+                    container.Add(matrix2);
 
-                for (int i = 0; i < firstXYPointsList.Capacity; i++)
-                {
-                    secondXYPointsList.Add(new Point2D<decimal>(i, i + 1));
-                }
-
-
-            }
-            catch (NotSupportedException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-
-            try
-            {
-                //initializing position of 1D decimal points
-                Position<decimal> firstPosition = new Position<decimal>(XPointList1);
-
-                //initializing position of 2D int point
-                Position<Point2D<int>> secondPosition = new Position<Point2D<int>>(firstXYPointsList);
-
-                //initializing position of 2D int point
-                Position<Point2D<int>> thirdPosition = new Position<Point2D<int>>() { new Point2D<int>(1, 2), new Point2D<int>(3, 4) };
-
-                //initializing position of 2D decimal point
-                Position<Point2D<decimal>> fourthPosition = new Position<Point2D<decimal>>(secondXYPointsList);
-
-                //initializing 2D int matrix
-                Matrix<Position<Point2D<int>>> firstMatrix = new Matrix<Position<Point2D<int>>>(secondPosition, secondPosition, thirdPosition, thirdPosition, secondPosition);
-                
-                //initializing 1D decimal matrix
-                Matrix<Position<decimal>> secondMatrix = new Matrix<Position<decimal>>() { firstPosition, firstPosition, firstPosition, firstPosition, firstPosition };
-
-                Container container = new Container();
-
-                container.Add(firstMatrix);
-                container.Add(secondMatrix);
-
-                CollectionCreator<Container> containersCreatorFactory = new ContainersCreator<Container>();
-                var containers = containersCreatorFactory.Create();
-
-                for (int i = 0; i < 10; i++)
-                {
                     containers.Add(container);
                 }
 
-                Console.WriteLine(containers.ToString());
+                //Creating collection of containers
+                var containersCollection = new Containers<decimal>(containers);
+
+                Console.WriteLine(containersCollection.ToString());
+
             }
-            catch (InvalidOperationException e)
+            catch (ArgumentNullException e)
             {
                 Console.WriteLine(e.Message);
             }
             catch (ArgumentException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }

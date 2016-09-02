@@ -1,55 +1,70 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace PMCDataModel
 {
     /// <summary>
-    /// Class for representation position of points
+    /// Repesents indexed points
     /// </summary>
-    /// <typeparam name="T">1D - any numeric C# type, 2D - Point2D struct, 3D - Point3D struct</typeparam>
+    /// <typeparam name="T">Any C# numeric type</typeparam>
 
-    public class Position<T> : Collection<T>
+    public class Position<T>:Collection<Point<T>> where T: struct
     {
-        #region Constructor
+      
+        #region Constructors
+        
+        /// <summary>
+        /// Initializes Position instance
+        /// </summary>
+        public Position() : base() { }
 
         /// <summary>
-        /// Empty constructor, throws NotSupportedException if object is being initialized with unsupported generic type
+        /// Initializes Position instance with list of points
         /// </summary>
-        public Position()
+        /// <param name="points">List of points</param>
+        public Position(List<Point<T>> points)
         {
-            if (!IsSupportedType())
+            if(!HaveOneTypePoint(points))
             {
-                throw new NotSupportedException("Wrong generic type.You can use only int, double,decimal, Point2D<> and Point3D<> types.");
+                throw new ArgumentException("The points in list are of different type.");
             }
+
+            base.FillCollection(points);
         }
 
         /// <summary>
-        /// Parametrized constructor
+        /// Initializes Position instance with array of points
         /// </summary>
-        /// <param name="points">List of points for storing in position</param>
-        public Position(List<T> points) : this()
-        {
-            CollectionList = points;
-        }
-
-        /// <summary>
-        /// Parametrized constructor
-        /// </summary>
-        /// <param name="points">Array of points</param>
-        public Position(params T[] points):this(new List<T>(points)) { }
+        /// <param name="points"></param>
+        public Position(params Point<T>[] points):this(new List<Point<T>>(points)) { }
 
         #endregion
 
         #region Methods
 
         /// <summary>
-        /// Method for adding new item to position collection
+        /// Adds new point into position
         /// </summary>
-        /// <param name="item">Item for adding</param>
-        public override void Add(T item)
+        /// <param name="point">Point for adding</param>
+        public override void Add(Point<T> point)
         {
-            CollectionList.Add(item);
+            if(point == null)
+            {
+                throw new ArgumentNullException("The argument is null");
+            }
+
+            if(ElementsList.Count > 0)
+            {
+                if(!AreTheSameType(ElementsList[ElementsList.Count-1],point))
+                {
+                    throw new ArgumentException("Points should be at the same type.");
+                }
+            }
+            base.AddElement(point);
+
         }
 
         /// <summary>
@@ -60,9 +75,9 @@ namespace PMCDataModel
         {
             StringBuilder sb = new StringBuilder(" ");
 
-            for (int i = 0; i < CollectionList.Count; i++)
+            for (int i = 0; i < ElementsList.Count; i++)
             {
-                sb.Append(CollectionList[i].ToString());
+                sb.Append(ElementsList[i].ToString());
                 sb.Append(",");
             }
 
@@ -71,26 +86,53 @@ namespace PMCDataModel
             return sb.ToString();
         }
 
-        protected override bool IsSupportedType()
+        public static Position<T> CreatePosition(Point<T>.PointType type, int number)
         {
-            var type = typeof(T);
+            List<Point<T>> points = new List<Point<T>>();
+            Random rand = new Random();
 
-            if (type.Equals(typeof(int)) ||
-               type.Equals(typeof(double)) ||
-               type.Equals(typeof(decimal)) ||
-               type.Equals(typeof(Point2D<int>))||
-               type.Equals(typeof(Point2D<double>)) ||
-               type.Equals(typeof(Point2D<decimal>)) ||
-               type.Equals(typeof(Point3D<int>))||
-               type.Equals(typeof(Point3D<double>)) ||
-               type.Equals(typeof(Point3D<decimal>)) )
+            for(int i=0; i<number;i++)
             {
-                return true;
+                switch(type)
+                {
+                    case Point<T>.PointType.Point1d:
+                        points.Add(new Point1D<T>((dynamic)rand.Next()));
+                        break;
+                    case Point<T>.PointType.Point2d:
+                        points.Add(new Point2D<T>((dynamic)rand.Next(), (dynamic)rand.Next()));
+                        break;
+                    case Point<T>.PointType.Point3d:
+                        points.Add(new Point3D<T>((dynamic)rand.Next(), (dynamic)rand.Next(), (dynamic)rand.Next()));
+                        break;
+                }
+                
             }
-            return false;
-        }
 
+            return new Position<T>(points);
+        }
+       
         #endregion
 
+        #region Helpers
+
+        private bool AreTheSameType(Point<T> point1,Point<T> point2)
+        {
+            return point1.GetPointType() == point2.GetPointType();
+        }
+
+        private bool HaveOneTypePoint(List<Point<T>> points)
+        {
+            for(int i=1; i<points.Count; i++)
+            {
+                if(!AreTheSameType(points[0],points[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        
+        #endregion
     }
 }

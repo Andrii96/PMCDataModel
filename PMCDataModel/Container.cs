@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -8,72 +7,40 @@ namespace PMCDataModel
     /// <summary>
     /// Non generic class for storing matrices
     /// </summary>
-    public class Container : Collection<object> 
+    public class Container<T>:Collection<Matrix<T>> where T:struct
     {
-        #region Constructor
+        #region Constructors
 
         /// <summary>
-        /// Parametrized constructor. Throws NotSupportedException if generic type is wrong.
+        /// Initializes container instance. Throws ArgumentException if wrong generic type
         /// </summary>
-        /// <param name="matrices">List of objects</param>
-        public Container(List<object> matrices)
-        {
-            foreach (var item in matrices)
-            {
-                if(!IsMatrixType(item))
-                {
-                    throw new NotSupportedException("Wrong generic type.You can use only Matrix<Position<>> type.");
+        public Container() : base() { }
 
-                }
-            }
-            CollectionList = matrices;
-        }
-
-        // <summary>
-        /// Parametrized constructor. Throws NotSupportedException if generic type is wrong.
-        /// </summary>
-        /// <param name="matrices">Array of objects</param>
-        public Container(params object[] matrices) : this(matrices.ToList()) { }
-
-        #endregion
-
-        #region Property
-        /// <summary>
-        /// Property for getting collection of matrices
-        /// </summary>
-        public List<object> MatrixCollection
-        {
-            get { return CollectionList; }
-        }
         #endregion
 
         #region Methods
 
         /// <summary>
-        /// Method for adding matrix into collection.
-        /// Throws ArrayTypeMismatchException if adding item is not Matrix<> type
-        /// Throws InvalidOperationException when adding wrong matrix 
+        /// Adds element to the collection
         /// </summary>
-        /// <param name="item">Iten for adding</param>
-        public override void Add(object item)
+        /// <param name="matrix">Element for adding</param>
+        public override void Add(Matrix<T> matrix)
         {
-            if (!IsMatrixType(item))
+            if (matrix == null || matrix.Count == 0)
             {
-                string message = "You can't save the instance of such type in Container. The type you can store is Matrix<>.";
-                throw new ArrayTypeMismatchException(message);
+                throw new ArgumentNullException("The argument is null");
             }
-            else
+
+            if (ElementsList.Count > 0)
             {
-                if (CollectionList.Count > 0)
+                if (!CheckMatrix(ElementsList.Last(), matrix))
                 {
-                    if (!CheckMatrix(CollectionList[CollectionList.Count - 1], item))
-                    {
-                        string message = "Every matrix in container should have the same amount of positions.";
-                        throw new InvalidOperationException(message);
-                    }
+                    string message = "Every matrix in container should have the same amount of positions.";
+                    throw new ArgumentException(message);
                 }
-                CollectionList.Add(item);
             }
+            base.AddElement(matrix);
+
         }
 
         /// <summary>
@@ -83,41 +50,52 @@ namespace PMCDataModel
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < CollectionList.Count; i++)
+            for (int i = 0; i < ElementsList.Count; i++)
             {
                 string matrixName = string.Format("  Matrix{0}:\n ", i + 1);
                 sb.Append(matrixName);
-                sb.Append(CollectionList[i].ToString());
+                sb.Append(ElementsList[i].ToString());
                 sb.Append("\n");
             }
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Factory method for creating container
+        /// </summary>
+        /// <param name="numberPositions">Number of matrices in container</param>
+        /// <returns></returns>
+        public static Container<T> CreateContainer(int numberOfMatrices) 
+        {
+            Container<T> container = new Container<T>();
+
+            for(int i=0; i< numberOfMatrices; i++)
+            {
+                if(i%2==0)
+                {
+                    container.Add(Matrix<T>.CreateMatrix(Point<T>.PointType.Point1d, 10));
+                }else if(i%4==0)
+                {
+                    container.Add(Matrix<T>.CreateMatrix(Point<T>.PointType.Point2d, 6));
+                }
+                else
+                {
+                    container.Add(Matrix<T>.CreateMatrix(Point<T>.PointType.Point3d, 12));
+                }
+                 
+            }
+
+            return container;
+
         }
 
         #endregion
 
         #region Helpers
 
-        private bool IsMatrixType(object o)
+        private bool CheckMatrix(Matrix<T> matrix1, Matrix<T> matrix2)
         {
-            return o.GetType().Equals(typeof(Matrix<Position<int>>)) ||
-                    o.GetType().Equals(typeof(Matrix<Position<double>>)) ||
-                    o.GetType().Equals(typeof(Matrix<Position<decimal>>)) ||
-                    o.GetType().Equals(typeof(Matrix<Position<Point2D<int>>>)) ||
-                    o.GetType().Equals(typeof(Matrix<Position<Point2D<decimal>>>)) ||
-                    o.GetType().Equals(typeof(Matrix<Position<Point2D<double>>>)) ||
-                    o.GetType().Equals(typeof(Matrix<Position<Point3D<int>>>)) ||
-                    o.GetType().Equals(typeof(Matrix<Position<Point3D<decimal>>>)) ||
-                    o.GetType().Equals(typeof(Matrix<Position<Point3D<double>>>));
-        }
-
-        private bool CheckMatrix(object matrix1, object matrix2)
-        {
-            return GetCount(matrix1) == GetCount(matrix2);
-        }
-
-        private int GetCount(object matrix)
-        {
-            return (int)matrix.GetType().GetProperty("Count").GetValue(matrix);
+            return matrix1.ElementsList.Count == matrix2.ElementsList.Count;
         }
 
         #endregion

@@ -8,67 +8,72 @@ namespace PositionTest
     [TestClass]
     public class ContainerTests
     {
-
-        private static List<Point3D<int>> _points3DList = new List<Point3D<int>>();
-        private static List<Point2D<int>> _points2DList = new List<Point2D<int>>();
-
-        private static List<Position<Point3D<int>>> _positions3DList = new List<Position<Point3D<int>>>();
-        private static List<Position<Point2D<int>>> _positions2DList = new List<Position<Point2D<int>>>();
-
-        private static Matrix<Position<Point3D<int>>> _matrix3D;
-        private static Matrix<Position<Point2D<int>>> _matrix2D;
-
-        private static Container _container;
+        private static List<Matrix<int>> _matrixes;
+        private static Container<int> _container;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            Random random = new Random();
-            int _pointsCount = random.Next(3, 100);
-            int _positionsCount = random.Next(1, 10);
+            _matrixes = new List<Matrix<int>>();
 
-            for (int i = 0; i < _pointsCount; i++)
+            Random rand = new Random();
+            int count = rand.Next(3, 12);
+
+            for(int i=0; i<count;i++)
             {
-                _points3DList.Add(new Point3D<int>(random.Next(100), random.Next(100), random.Next(100)));
-                _points2DList.Add(new Point2D<int>(random.Next(100), random.Next(100)));
-
+                if(i%2==0)
+                {
+                    _matrixes.Add(Matrix<int>.CreateMatrix(Point<int>.PointType.Point2d, 6));
+                }
+                else if(i%3==0)
+                {
+                    _matrixes.Add(Matrix<int>.CreateMatrix(Point<int>.PointType.Point3d, 6));
+                }
+                else
+                {
+                    _matrixes.Add(Matrix<int>.CreateMatrix(Point<int>.PointType.Point1d, 6));
+                }
+                
             }
 
-            for (int i = 0; i < _positionsCount; i++)
+            _container = new Container<int>();
+
+            foreach(var matrix in _matrixes)
             {
-                _positions3DList.Add(new Position<Point3D<int>>(_points3DList));
-                _positions2DList.Add(new Position<Point2D<int>>(_points2DList.GetRange(0, _positionsCount - i)));
+                _container.Add(matrix);
             }
-
-            _matrix3D = new Matrix<Position<Point3D<int>>>(_positions3DList);
-            _matrix2D = new Matrix<Position<Point2D<int>>>(_positions2DList);
-
-            _container = new Container(_matrix2D, _matrix3D);
         }
 
         [TestMethod]
         public void Add_Matrix_ElementAdded()
         {
-            var newMatrix =  new Matrix<Position<Point2D<int>>>(_positions2DList);
+            var matrix = Matrix<int>.CreateMatrix(Point<int>.PointType.Point2d, 6);
 
-            _container.Add(newMatrix);
-
-            Assert.IsTrue(_container.Contains(newMatrix));
-        }
-
-        [ExpectedException(typeof(ArrayTypeMismatchException))]
-        [TestMethod]
-        public void Add_WrongTypeMatrix_ExceptionThrown()
-        {
-            _container.Add(new Point2D<int>(1,2));
-        }
-
-        [ExpectedException(typeof(InvalidOperationException))]
-        [TestMethod]
-        public void Add_WrongMatrix_ExceptionThrown()
-        {
-            var matrix = new Matrix<Position<Point2D<int>>>(_positions2DList.GetRange(0,2));
             _container.Add(matrix);
+
+            Assert.IsTrue(_container.ElementsList.Contains(matrix));
         }
+
+        [ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        public void Add_Matrix_ExceptionThrown()
+        {
+            var matrix = Matrix<int>.CreateMatrix(Point<int>.PointType.Point2d, 2);
+
+            _container.Add(matrix);
+
+            Assert.IsTrue(_container.ElementsList.Contains(matrix));
+        }
+
+        [ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod]
+        public void Add_EmptyMatrix_ExceptionThrown()
+        {
+            var matrix = new Matrix<int>();
+
+            _container.Add(matrix);
+
+        }
+
     }
 }

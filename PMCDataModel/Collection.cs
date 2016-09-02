@@ -1,132 +1,100 @@
-﻿
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace PMCDataModel
 {
     /// <summary>
-    /// Abstract class that represents collection element
+    /// Represents collection of elements
     /// </summary>
-    /// <typeparam name="T">element type</typeparam>
-    public abstract class Collection<T> : ICollection<T> 
+    /// <typeparam name="T">Collection parameters</typeparam>
+    public abstract class Collection<T> :NumericType<T>, IEnumerable<T>
     {
         #region Fields
 
-         private  List<T> _collection = new List<T>();
-         private bool _isReadOnly;
+        private List<T> _elementsList;
 
         #endregion
 
-        #region Properties
-            /// <summary>
-            /// Readonly propety for getting data from collection
-            /// </summary>
-            public List<T> CollectionList
-            {
-                get { return _collection; }
-                protected set { _collection = value; }
-            }
+        #region Constructor
+
+        /// <summary>
+        /// Empty constructor. Initializes collection.
+        /// </summary>
+        public Collection()
+        {
+            _elementsList = new List<T>();
+        }
+
+      
+        #endregion
+
+        #region Property
+
+        /// <summary>
+        /// Gets immutable collection elements
+        /// </summary>
+        public ReadOnlyCollection<T> ElementsList
+        {
+            get { return new ReadOnlyCollection<T>(_elementsList); }
+        }
+
+        /// <summary>
+        /// Gets number of elements
+        /// </summary>
+        public int Count
+        {
+            get { return _elementsList.Count; }
+        }
+
         #endregion
 
         #region Methods
-            /// <summary>
-            /// Index method for getting collection element via index
-            /// </summary>
-            /// <param name="index">element's index</param>
-            /// <returns>Element of type T</returns>
-            public  T this[int index]
-            {
-                get { return _collection[index]; }
-            }
 
-            protected virtual bool IsSupportedType()
-            {
-                return true;
-            }
+        /// <summary>
+        /// Fills collection with list of elements
+        /// </summary>
+        /// <param name="list">List of elements</param>
+        protected void FillCollection(List<T> list)
+        {
+            _elementsList = list;
+        }
 
-        #endregion
+        /// <summary>
+        /// Adds element to the collection
+        /// </summary>
+        /// <param name="element">Element for adding</param>
+        protected void AddElement(T element)
+        {
+            _elementsList.Add(element);
+        }
 
-        #region ICollection<> implementation
-            
-            /// <summary>
-            /// Readonly property for getting number of elements
-            /// </summary>
-            public int Count
-            {
-                get
-                {
-                    return _collection.Count;
-                }
-            }
+        public abstract void Add(T element);
 
-            /// <summary>
-            /// Readonly property for defining whether collectin is readonly
-            /// </summary>
-            public bool IsReadOnly
-            {
-                get
-                {
-                    return _isReadOnly;
-                }
-            }
+        /// <summary>
+        /// Gets element by index from collection
+        /// </summary>
+        /// <param name="index">Index of element</param>
+        /// <returns></returns>
+        public T this[int index]
+        {
+            get { return _elementsList[index]; }
+        }
 
-            /// <summary>
-            /// Abstract method for adding element into collection
-            /// </summary>
-            /// <param name="item">Item for adding</param>
-            public abstract void Add(T item);
-        
-            /// <summary>
-            /// Method for clearing collection
-            /// </summary>
-            public void Clear()
-            {
-                _collection.Clear();
-            }
+        public IEnumerator<T> GetEnumerator()
+        {
+            return _elementsList.GetEnumerator();
+        }
 
-            /// <summary>
-            /// Method for checking whether element is in collection
-            /// </summary>
-            /// <param name="item">Item for checking</param>
-            /// <returns>True if item is in collection</returns>
-            public bool Contains(T item)
-            {
-                return _collection.Contains<T>(item);
-            }
-            
-            /// <summary>
-            /// Method for copping collection to array
-            /// </summary>
-            /// <param name="array">Destination</param>
-            /// <param name="arrayIndex">Starting index</param>
-            public void CopyTo(T[] array, int arrayIndex)
-            {
-                _collection.CopyTo(array,arrayIndex);
-            }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
 
-            public IEnumerator<T> GetEnumerator()
-            {
-                foreach(var element in _collection)
-                {
-                    yield return element;
-                }
-            }
-
-            /// <summary>
-            /// Method for removing element from collection
-            /// </summary>
-            /// <param name="item">Item for deliting</param>
-            /// <returns>True if elemet has sucsessfully been deleted</returns>
-            public bool Remove(T item)
-            {
-                return _collection.Remove(item);
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return this.GetEnumerator();
-            }
         #endregion
 
     }

@@ -8,72 +8,74 @@ namespace PositionTest
     [TestClass]
     public class MatrixTests
     {
-        private static int _pointsCount;
-        private static int _positionsCount;
-        private static List<Point3D<int>> _pointsList = new List<Point3D<int>>();
-        private static List<Position<Point3D<int>>> _positionsList = new List<Position<Point3D<int>>>();
-        private static Matrix<Position<Point3D<int>>> _matrix;
+        private static Matrix<int> _matrix;
+        private static List<Position<int>> _positionsList;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            Random random = new Random();
-            _pointsCount = random.Next(3, 100);
-            _positionsCount = random.Next(1, 10);
+            Random rand = new Random();
+            int positionsNumber = rand.Next(3, 10);
 
-            for (int i=0; i < _pointsCount; i++)
+            _positionsList = new List<Position<int>>();
+
+            for (int i = 0; i < positionsNumber; i++)
             {
-                _pointsList.Add(new Point3D<int>(random.Next(100), random.Next(100), random.Next(100)));
+                _positionsList.Add(Position<int>.CreatePosition(Point<int>.PointType.Point2d, 3));
             }
 
-            for(int i = 0; i < _positionsCount; i++)
-            {
-                _positionsList.Add(new Position<Point3D<int>>(_pointsList));
-            }
-
-            _matrix = new Matrix<Position<Point3D<int>>>(_positionsList);            
+            _matrix = new Matrix<int>(_positionsList);
         }
 
-        [ExpectedException(typeof(NotSupportedException))]
+        [ExpectedException(typeof(ArgumentException))]
         [TestMethod]
-        public void Constructor_Empty_ExceptionThrown()
+        public void EmptyConstructor_ExceptionThrown()
         {
-            Matrix<Position<string>> matrix = new Matrix<Position<string>>();
+            var matrix = new Matrix<char>();            
         }
 
         [TestMethod]
-        public void Add_Position3D_ElementAdded()
+        public void EmptyConstructor_Create3DMatrix_InstanceCreated()
         {
-            Position<Point3D<int>> newPosition = new Position<Point3D<int>>(_pointsList);
+            List<Position<int>> _positionsList = new List<Position<int>>();
+
+            _positionsList.Add(Position<int>.CreatePosition(Point<int>.PointType.Point3d, 3));
+            _positionsList.Add(Position<int>.CreatePosition(Point<int>.PointType.Point3d, 3));
+
+            var matrix = new Matrix<int>(_positionsList);
+        }
+
+        [ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        public void EmptyConstructor_Create3DMatrix_ExceptionThrown()
+        {
+            List<Position<int>> _positionsList = new List<Position<int>>();
+
+            _positionsList.Add(Position<int>.CreatePosition(Point<int>.PointType.Point3d, 3));
+            _positionsList.Add(Position<int>.CreatePosition(Point<int>.PointType.Point3d, 2));
+
+            var matrix = new Matrix<int>(_positionsList);
+        }
+
+        [TestMethod]
+        public void Add_Position_PositionAdded()
+        {
+            var newPosition = Position<int>.CreatePosition(Point<int>.PointType.Point2d, 5);
 
             _matrix.Add(newPosition);
 
-            Assert.IsTrue(_matrix.Contains(newPosition));
-           
+            Assert.IsTrue(_matrix.ElementsList.Contains(newPosition));
         }
 
+        [ExpectedException(typeof(ArgumentException))]
         [TestMethod]
-        public void Add_Position2D_ElementAdded()
+        public void Add_Position_ExceptionThrown()
         {
-            var matrix = new Matrix<Position<Point2D<int>>>();
-            var position1 = new Position<Point2D<int>>(new Point2D<int>(1, 2), new Point2D<int>(8, 9));
-            var position2 = new Position<Point2D<int>>(new Point2D<int>(1, 2));
-
-            matrix.Add(position1);
-            matrix.Add(position2);
-
-            Assert.IsTrue(matrix.Contains(position1) && matrix.Contains(position2));
-        }
-
-        [ExpectedException(typeof(InvalidOperationException))]
-        [TestMethod]
-        public void Add_Position3D_ExceptionThrown()
-        {
-            Position<Point3D<int>> newPosition = new Position<Point3D<int>>();
-            newPosition.Add(new Point3D<int>(1, 2, 3));
+            var newPosition = Position<int>.CreatePosition(Point<int>.PointType.Point3d, 5);
 
             _matrix.Add(newPosition);
         }
+
 
     }
 }

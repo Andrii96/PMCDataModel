@@ -8,79 +8,107 @@ namespace PositionTest
     [TestClass]
     public class ContainersTests
     {
-        private static List<Point3D<int>> _points3DList = new List<Point3D<int>>();
-        private static List<Point2D<int>> _points2DList = new List<Point2D<int>>();
-
-        private static List<Position<Point3D<int>>> _positions3DList = new List<Position<Point3D<int>>>();
-        private static List<Position<Point2D<int>>> _positions2DList = new List<Position<Point2D<int>>>();
-
-        private static Matrix<Position<Point3D<int>>> _matrix3D;
-        private static Matrix<Position<Point2D<int>>> _matrix2D;
-
-        private static Container _container;
-        private static Containers<Container> _containers = new Containers<Container>();
+        private static Containers<int> _containers;
+        private static List<Container<int>> _containerList;
+        private static List<Matrix<int>> _matrices;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            Random random = new Random();
-            int _pointsCount = random.Next(3, 100);
-            int _positionsCount = random.Next(3, 10);
+            Random rand = new Random();
+            int count = rand.Next(1, 10);
 
-            for (int i = 0; i < _pointsCount; i++)
+            _matrices = new List<Matrix<int>>();
+
+            for (int i = 0; i < count; i++)
             {
-                _points3DList.Add(new Point3D<int>(random.Next(100), random.Next(100), random.Next(100)));
-                _points2DList.Add(new Point2D<int>(random.Next(100), random.Next(100)));
+                if (i % 2 == 0)
+                {
+                    _matrices.Add(Matrix<int>.CreateMatrix(Point<int>.PointType.Point2d, 10));
+                }
+                else
+                {
+                    _matrices.Add(Matrix<int>.CreateMatrix(Point<int>.PointType.Point3d, 10));
+                }
 
             }
 
-            for (int i = 0; i < _positionsCount; i++)
+            _containerList = new List<Container<int>>();
+
+            for (int i = 0; i < 10; i++)
             {
-                _positions3DList.Add(new Position<Point3D<int>>(_points3DList));
-                _positions2DList.Add(new Position<Point2D<int>>(_points2DList.GetRange(0, _positionsCount - i)));
+                var container = new Container<int>();
+                foreach (var item in _matrices)
+                {
+                    container.Add(item);
+                }
+                _containerList.Add(container);
             }
 
-            _matrix3D = new Matrix<Position<Point3D<int>>>(_positions3DList);
-            _matrix2D = new Matrix<Position<Point2D<int>>>(_positions2DList);
-
-            _container = new Container(_matrix2D, _matrix3D);
-
-            _containers.Add(_container);
+            _containers = new Containers<int>(_containerList);
 
         }
 
         [TestMethod]
         public void Add_Container_ElementAdded()
         {
-            var newContainer = _container;
-            _containers.Add(newContainer);
+            _containers.Add(_containerList[0]);
 
-            Assert.IsTrue(_containers.Contains(newContainer));
+            Assert.IsTrue(_containers.ElementsList.Contains(_containerList[0]));
         }
 
         [ExpectedException(typeof(ArgumentException))]
         [TestMethod]
-        public void Add_HasDifferentMatrixNumberContainer_ExceptionThrown()
+        public void Add_DiffAmountOfMatrixContainer_ExceptionThrown()
         {
-            Container container = new Container(_matrix2D);
+            var container = Container<int>.CreateContainer(1);
+            _containers.Add(container);
+        }
+
+         [ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        public void Add_DiffTypeOfIndexedMatrices_ExceptionThrown()
+        {
+            var list = new List<Matrix<int>>();
+            for (int i = 0; i < _matrices.Count; i++)
+            {
+                list.Add(Matrix<int>.CreateMatrix(Point<int>.PointType.Point1d, 10));
+            }
+
+            var container = new Container<int>();
+            foreach (var item in list)
+            {
+                container.Add(item);
+            }
+
             _containers.Add(container);
         }
 
         [ExpectedException(typeof(ArgumentException))]
         [TestMethod]
-        public void Add_HasDifferentIndexedMatrixTypeContainer_ExceptionThrown()
+        public void Add_DiffNumberOfPositionIn3DIndexedMatrices_ExceptionThrown()
         {
-            Container container = new Container(_matrix3D, _matrix2D);
-            _containers.Add(container);
-        }
+            var container = new Container<int>();
+            var list = new List<Matrix<int>>();
+            for (int i = 0; i < _matrices.Count; i++)
+            {
+                if(i==1)
+                {
+                    list.Add(Matrix<int>.CreateMatrix(Point<int>.PointType.Point3d, 10));
+                }else
+                {
+                    list.Add(Matrix<int>.CreateMatrix(Point<int>.PointType.Point3d, 9));
+                }               
+            }
 
-        [ExpectedException(typeof(ArgumentException))]
-        [TestMethod]
-        public void Add_HasDifferentNumberOfPositionsIn3DMatrixContainer_ExceptionThrown()
-        {
-            Matrix<Position<Point3D<int>>> matrix = new Matrix<Position<Point3D<int>>>(_positions3DList.GetRange(0,2));
-            Container container = new Container(_matrix2D, matrix);
-            _containers.Add(container);
+            foreach (var item in list)
+            {
+                container.Add(item);
+            }
+
+            var containers = new Containers<int>();
+            containers.Add(container);
         }
     }
+  
 }
