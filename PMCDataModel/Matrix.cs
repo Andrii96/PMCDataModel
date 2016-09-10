@@ -35,7 +35,7 @@ namespace PMCDataModel
             {
                 throw new ArgumentException("All positions should be the same type");
             }
-
+            //TODO: NullReferenceException possible
             if(positions[0].ElementsList[0].GetPointType() == Point<T>.PointType.Point3d)
             {
                 if (!Check3DMatrix(positions))
@@ -99,6 +99,8 @@ namespace PMCDataModel
             return sb.ToString();
         }
         
+        //TODO: Not a part of an API
+
         /// <summary>
         /// Factory method for creating matrix
         /// </summary>
@@ -131,6 +133,7 @@ namespace PMCDataModel
 
         #region Helpers
 
+        //TODO: Numerous cases with NullReferenceException and ArgumentOutOfRangeException possible
         private bool IsMatrix3D()
         {          
             return ElementsList[0].ElementsList[0].GetPointType() == Point<T>.PointType.Point3d;

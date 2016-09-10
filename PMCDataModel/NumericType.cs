@@ -18,6 +18,8 @@ namespace PMCDataModel
 
         #region Helpers
 
+        //TODO: Not intuitive during the outside call, also not supported types listed (e.g. float, short, long...)
+        //TODO: Across the solution, see ReSharper remarks
         private bool IsNumericType(Type type)
         {
             return type.Equals(typeof(int)) || type.Equals(typeof(double)) || type.Equals(typeof(decimal));

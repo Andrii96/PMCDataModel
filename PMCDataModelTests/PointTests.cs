@@ -4,6 +4,7 @@ using PMCDataModel;
 
 namespace PMCDataModelTests
 {
+    //TODO: For all tests, edge cases are not covered
     [TestClass]
     public class PointTests
     {

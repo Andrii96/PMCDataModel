@@ -7,6 +7,7 @@ namespace PMCDataModel
     /// <typeparam name="T"> C# numeric type</typeparam>
     public abstract class Point<T>:NumericType<T> where T:struct
     {
+        //TODO: No reason to use a nested type here
         /// <summary>
         /// Enum with points types
         /// </summary>

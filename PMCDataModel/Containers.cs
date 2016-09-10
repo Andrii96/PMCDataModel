@@ -38,7 +38,7 @@ namespace PMCDataModel
             }
         }
 
-        // <summary>
+        /// <summary>
         /// Initializes containers instance with container array. Throws ArgumentException if wrong generic type
         /// </summary>
         public Containers(params Container<T>[] containers) : this(containers.ToList()) { }

@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace PMCDataModel
 {
+    //TODO: Should allow direct intuitive interaction, ElementsList has different meanings for Container, Matrix, Position
+    //Should be either IList container.Matrices or container as IList<Matrix>
+
     /// <summary>
     /// Represents collection of elements
     /// </summary>
@@ -35,6 +38,7 @@ namespace PMCDataModel
 
         #region Property
 
+        //TODO: New instance per call
         /// <summary>
         /// Gets immutable collection elements
         /// </summary>
@@ -55,6 +59,7 @@ namespace PMCDataModel
 
         #region Methods
 
+        //TODO: Why not to accept any IEnumerable? Also, better to call in constructor directly
         /// <summary>
         /// Fills collection with list of elements
         /// </summary>

@@ -67,6 +67,7 @@ namespace PMCDataModel
 
         }
 
+        //TODO: string.Join
         /// <summary>
         /// String representation of position
         /// </summary>
@@ -86,6 +87,8 @@ namespace PMCDataModel
             return sb.ToString();
         }
 
+
+        //TODO: Not an API part
         public static Position<T> CreatePosition(Point<T>.PointType type, int number)
         {
             List<Point<T>> points = new List<Point<T>>();
@@ -115,11 +118,13 @@ namespace PMCDataModel
 
         #region Helpers
 
+        //TODO: Not the simplest approach
         private bool AreTheSameType(Point<T> point1,Point<T> point2)
         {
             return point1.GetPointType() == point2.GetPointType();
         }
 
+        //TODO: LINQ All can be used
         private bool HaveOneTypePoint(List<Point<T>> points)
         {
             for(int i=1; i<points.Count; i++)
